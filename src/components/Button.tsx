@@ -66,6 +66,7 @@ export function Button({
 
   return (
     <Pressable
+      accessibilityRole="button"
       onPress={onPress}
       disabled={isDisabled}
       style={({ pressed }: PressableStateCallbackType) => [

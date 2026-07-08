@@ -5,13 +5,14 @@ import { colors, spacing, fontSize, fontWeight } from '@/theme/tokens';
 import {
   Button,
   Card,
+  FocusSession,
   Modal,
   NoteEditor,
   ResponsiveLayout,
   MobileScheduleView,
   DesktopScheduleView,
 } from '@/components';
-import { useTaskStore } from '@/stores';
+import { useFocusStore, useTaskStore } from '@/stores';
 
 export default function TodayScreen() {
   const { bp, width } = useBreakpoint();
@@ -27,6 +28,10 @@ export default function TodayScreen() {
   const generateTasksFromNote = useTaskStore((s) => s.generateTasksFromNote);
   const toggleTask = useTaskStore((s) => s.toggleTask);
   const clearTasks = useTaskStore((s) => s.clearTasks);
+  const currentTaskId = useFocusStore((s) => s.currentTaskId);
+  const focusStartedAt = useFocusStore((s) => s.startedAt);
+  const startFocus = useFocusStore((s) => s.startFocus);
+  const endFocus = useFocusStore((s) => s.endFocus);
 
   const timestamp = useMemo(() => {
     const d = new Date();
@@ -53,12 +58,48 @@ export default function TodayScreen() {
 
   // 根据断点选择日程视图
   const isDesktop = width >= 768;
+  const currentTask = tasks.find((task) => task.id === currentTaskId) ?? null;
+
+  const handleStartFocus = (taskId: string) => {
+    startFocus(taskId);
+    requestDesktopFullscreen(isDesktop);
+  };
+
+  const handleCompleteFocus = () => {
+    if (currentTask && !currentTask.done) toggleTask(currentTask.id);
+    endFocus();
+    void exitDesktopFullscreen();
+  };
+
+  const handleExitFocus = () => {
+    endFocus();
+    void exitDesktopFullscreen();
+  };
+
+  if (currentTask && focusStartedAt) {
+    return (
+      <FocusSession
+        task={currentTask}
+        startedAt={focusStartedAt}
+        onComplete={handleCompleteFocus}
+        onExit={handleExitFocus}
+      />
+    );
+  }
 
   const scheduleView = tasks.length > 0 ? (
     isDesktop ? (
-      <DesktopScheduleView tasks={tasks} onToggle={toggleTask} />
+      <DesktopScheduleView
+        tasks={tasks}
+        onToggle={toggleTask}
+        onPress={handleStartFocus}
+      />
     ) : (
-      <MobileScheduleView tasks={tasks} onToggle={toggleTask} />
+      <MobileScheduleView
+        tasks={tasks}
+        onToggle={toggleTask}
+        onPress={handleStartFocus}
+      />
     )
   ) : null;
 
@@ -153,6 +194,21 @@ function RuleItem({ accent, text }: { accent: string; text: string }) {
       <Text style={styles.ruleText}>{text}</Text>
     </View>
   );
+}
+
+function requestDesktopFullscreen(isDesktop: boolean) {
+  if (!isDesktop || typeof document === 'undefined') return;
+  const element = document.documentElement;
+  if (!document.fullscreenElement && element.requestFullscreen) {
+    void element.requestFullscreen().catch(() => undefined);
+  }
+}
+
+async function exitDesktopFullscreen() {
+  if (typeof document === 'undefined') return;
+  if (document.fullscreenElement && document.exitFullscreen) {
+    await document.exitFullscreen().catch(() => undefined);
+  }
 }
 
 const styles = StyleSheet.create({

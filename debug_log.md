@@ -39,3 +39,9 @@
 - 任务重复 bug：`nextId()` 用 `Date.now()` 生成 id，多端同一份备忘录生成的 id 不同，`mergeLWW` 无法去重 → 改为 `deterministicId(title, block, minutes)` 基于内容 hash，同一备忘录在任何设备生成的 id 完全相同。
 - 云端任务全部有 `deleted_at` 非 null 导致 `fetchRemoteRows` 一条都拉不到 → 根因：`generateTasksFromNote` 先 `softDeleteAllTasks` 设了 `deleted_at`，然后 `upsertTasks` 的 payload 不含 `deleted_at` 字段无法覆盖 → 修复 `blockToRow` 把 `deleted_at: null` 加入 upsert payload，复活软删除的行。
 - DesktopScheduleView 嵌套 `ScrollView horizontal` 在 Web 端被外层纵向 ScrollView 截断 → 改用 `View + overflow: 'scroll'` + `flexDirection: 'row'`。
+
+## Task 6（专注模式）
+- 用户要求 PC 端任务必须从上至下按时间顺序排列，同一时间块内也不能左右分列 → 移除 DesktopScheduleView 的 evening 双列网格，所有分组统一单列，并让 `sortTasks` 在同 minutes 内保持原输入顺序而非按标题重排。
+- 点击任务进入专注模式时，勾选按钮也可能触发父级卡片点击 → 在 TaskBlockCard 的 checkbox `onPress` 中调用 `event.stopPropagation()`，避免打勾时误入专注。
+- 专注状态需要跨刷新恢复但不应污染任务数据 → 新增 `useFocusStore` 独立持久化 `currentTaskId / startedAt`，今日页根据当前任务渲染 FocusSession。
+- Playwright 首次验收用 `getByTestId` / `getByRole('button')` 在 React Native Web DOM 中不稳定 → 改用 placeholder 与可见文本定位，并给 Pressable 补 `accessibilityRole` 作为后续可访问性改进基础。

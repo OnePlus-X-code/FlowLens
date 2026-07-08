@@ -54,6 +54,7 @@ export function NoteEditor({
 
       <Input
         bare
+        testID="note-title"
         value={title}
         onChangeText={handleTitleChange}
         placeholder={titlePlaceholder}
@@ -65,6 +66,7 @@ export function NoteEditor({
       <Input
         bare
         multiline
+        testID="note-body"
         minLines={minBodyLines}
         value={body}
         onChangeText={handleBodyChange}

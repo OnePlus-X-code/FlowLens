@@ -51,7 +51,7 @@ const BLOCK_WEIGHT: Record<TimeBlock, number> = {
  * 1. 先把 exact 类型的任务按 minutes 归入对应时段（早 ≤720, 中 720-839, 下午 840-1079, 晚 ≥1080）
  * 2. 按时段权重排序
  * 3. 同时段内按 minutes 升序（null 排最后）
- * 4. 同 minutes 内按 title 排序（稳定）
+ * 4. 同 minutes 内保持原输入顺序（JS sort 为稳定排序）
  */
 export function sortTasks(tasks: TaskBlock[]): TaskBlock[] {
   const mapped = tasks.map((t) => ({
@@ -67,7 +67,7 @@ export function sortTasks(tasks: TaskBlock[]): TaskBlock[] {
     if (a.effMinutes !== b.effMinutes) {
       return a.effMinutes - b.effMinutes;
     }
-    return a.task.title.localeCompare(b.task.title, 'zh');
+    return 0;
   });
 
   return mapped.map((m) => m.task);

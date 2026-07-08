@@ -7,3 +7,4 @@ export { NoteEditor } from './NoteEditor';
 export { TaskBlockCard } from './TaskBlockCard';
 export { MobileScheduleView } from './MobileScheduleView';
 export { DesktopScheduleView } from './DesktopScheduleView';
+export { FocusSession } from './FocusSession';

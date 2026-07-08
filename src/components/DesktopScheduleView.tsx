@@ -2,16 +2,15 @@
  * DesktopScheduleView
  *
  * 纵向时间线：早 → 中 → 下午 → 晚 → 随时，从上到下排列。
- * 早上/中午/下午/随时：单列纵向，保留时间先后顺序。
- * 晚上：双列网格（任务通常较多，双列更紧凑）。
+ * 所有时段均单列纵向排列，保留时间顺序与同一时段内的输入顺序。
  *
  * 适用：宽屏（width >= 768）
  */
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { colors, spacing, fontSize, fontWeight, radius, shadow } from '@/theme/tokens';
+import { colors, spacing, fontSize, fontWeight } from '@/theme/tokens';
 import { TaskBlockCard } from './TaskBlockCard';
-import { groupTasksByBlock, BLOCK_ACCENT, BLOCK_LABEL } from '@/services/timeUtils';
+import { groupTasksByBlock } from '@/services/timeUtils';
 import type { TaskBlock } from '@/services/parseNoteToBlocks';
 
 interface DesktopScheduleViewProps {
@@ -51,13 +50,10 @@ export function DesktopScheduleView({
               </Text>
             </View>
 
-            {/* 任务卡片：晚上用双列网格，其它时段单列保留时间先后顺序 */}
-            <View style={group.block === 'evening' ? styles.grid : styles.list}>
+            {/* 任务卡片：PC 端也使用单列，避免同一时段任务左右分栏打乱阅读顺序 */}
+            <View style={styles.list}>
               {group.tasks.map((task) => (
-                <View
-                  key={task.id}
-                  style={group.block === 'evening' ? styles.gridItem : undefined}
-                >
+                <View key={task.id}>
                   <TaskBlockCard
                     task={task}
                     onToggle={onToggle}
@@ -117,17 +113,7 @@ const styles = StyleSheet.create({
     color: colors.textMuted,
     marginLeft: 'auto',
   },
-  // 单列列表：保留时间先后顺序
   list: {
     gap: spacing.sm,
-  },
-  // 双列网格（晚上任务通常较多，双列更紧凑）
-  grid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: spacing.sm,
-  },
-  gridItem: {
-    width: '48%',
   },
 });

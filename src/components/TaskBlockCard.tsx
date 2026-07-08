@@ -23,6 +23,7 @@ export function TaskBlockCard({ task, onToggle, onPress }: TaskBlockCardProps) {
   const accent = BLOCK_ACCENT[task.block];
   return (
     <Pressable
+      accessibilityRole="button"
       onPress={() => onPress?.(task.id)}
       style={({ pressed }) => [
         styles.card,
@@ -50,7 +51,12 @@ export function TaskBlockCard({ task, onToggle, onPress }: TaskBlockCardProps) {
 
       {/* 完成按钮 */}
       <Pressable
-        onPress={() => onToggle?.(task.id)}
+        accessibilityRole="checkbox"
+        accessibilityState={{ checked: task.done }}
+        onPress={(event) => {
+          event.stopPropagation();
+          onToggle?.(task.id);
+        }}
         hitSlop={12}
         style={[styles.checkbox, task.done && styles.checkboxDone]}
       >
