@@ -55,3 +55,8 @@
 - 结构化复盘需要稳定 JSON → 使用 Responses API 的 `text.format.json_schema` 强制返回 `{ achievements, issues, moodLabel, moodScore }`，再在客户端做兜底归一化。
 - Supabase 未配置或未登录时仍应可用 → 先生成本地 `local_` 复盘卡片并持久化，若 `reviews` 表可写再替换为云端返回记录。
 - Playwright 文本断言遇到包含关系导致 strict mode 冲突 → 对复盘标题、成就、问题、情绪结果使用 `exact: true` 定位。
+
+## Task 9（周报与情绪趋势）
+- Desktop secondary 只在宽屏显示 → 将周报指标、情绪趋势和本周摘要放入 `ResponsiveLayout.secondary`，Mobile 继续保持主栏复盘列表。
+- 不引入图表库也要可验收 → 用 React Native `View` 绘制情绪柱状趋势，避免新增依赖。
+- 成就文本同时出现在结构化卡片和周报摘要 → Playwright 对该文本改为 `toHaveCount(2)`，验收这两个区域都渲染。

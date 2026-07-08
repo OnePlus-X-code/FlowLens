@@ -66,6 +66,11 @@ test('review page records audio and displays a mocked transcription', async ({ p
   });
 
   await page.goto('/review');
+  await page.evaluate(() => {
+    localStorage.clear();
+    sessionStorage.clear();
+  });
+  await page.reload();
   await page.getByText('开始录音', { exact: true }).click();
   await expect(page.getByText('录音中')).toBeVisible();
   await page.getByText('停止并转写', { exact: true }).click();
@@ -75,7 +80,12 @@ test('review page records audio and displays a mocked transcription', async ({ p
 
   await page.getByText('生成复盘', { exact: true }).click();
   await expect(page.getByText('结构化复盘', { exact: true })).toBeVisible();
-  await expect(page.getByText('完成了周报', { exact: true })).toBeVisible();
+  await expect(page.getByText('完成了周报', { exact: true })).toHaveCount(2);
   await expect(page.getByText('需要更好安排下午的深度工作', { exact: true })).toBeVisible();
   await expect(page.getByText('平静 · 8/10', { exact: true })).toBeVisible();
+  await expect(page.getByText('周报', { exact: true })).toBeVisible();
+  await expect(page.getByText('本周复盘', { exact: true })).toBeVisible();
+  await expect(page.getByText('平均情绪', { exact: true })).toBeVisible();
+  await expect(page.getByText('情绪趋势', { exact: true })).toBeVisible();
+  await expect(page.getByText('本周摘要', { exact: true })).toBeVisible();
 });
