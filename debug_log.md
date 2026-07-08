@@ -60,3 +60,7 @@
 - Desktop secondary 只在宽屏显示 → 将周报指标、情绪趋势和本周摘要放入 `ResponsiveLayout.secondary`，Mobile 继续保持主栏复盘列表。
 - 不引入图表库也要可验收 → 用 React Native `View` 绘制情绪柱状趋势，避免新增依赖。
 - 成就文本同时出现在结构化卡片和周报摘要 → Playwright 对该文本改为 `toHaveCount(2)`，验收这两个区域都渲染。
+
+## Task 10（Final Acceptance 回归）
+- 原有 E2E 只覆盖 Desktop → 新增 mobile viewport 验收，确认移动端任务列表纵向展示且无横向溢出。
+- 最终验收需要可追踪记录 → 新增 `docs/Acceptance_Report.md` 汇总完成范围、验证命令与生产化注意事项。
