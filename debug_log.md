@@ -45,3 +45,8 @@
 - 点击任务进入专注模式时，勾选按钮也可能触发父级卡片点击 → 在 TaskBlockCard 的 checkbox `onPress` 中调用 `event.stopPropagation()`，避免打勾时误入专注。
 - 专注状态需要跨刷新恢复但不应污染任务数据 → 新增 `useFocusStore` 独立持久化 `currentTaskId / startedAt`，今日页根据当前任务渲染 FocusSession。
 - Playwright 首次验收用 `getByTestId` / `getByRole('button')` 在 React Native Web DOM 中不稳定 → 改用 placeholder 与可见文本定位，并给 Pressable 补 `accessibilityRole` 作为后续可访问性改进基础。
+
+## Task 7（录音采集与 Whisper 转录）
+- 前端直连 OpenAI 转录接口会暴露 API Key → 当前仅作为本地 MVP 使用 `EXPO_PUBLIC_OPENAI_API_KEY`，并在 `.env.example` 标注生产环境应迁移到后端/Edge Function 代理。
+- 浏览器自动验收不能依赖真实麦克风和真实 OpenAI 调用 → Playwright 中 mock `navigator.mediaDevices.getUserMedia`、`MediaRecorder` 与 `audio/transcriptions` 响应，验证交互链路而不消耗真实 API。
+- React Native 与 Web 录音能力不同 → Web 使用 `MediaRecorder` 生成 `audio/webm` File，Native 使用 `expo-av` 录音并以 `{ uri, name, type }` 形式上传。

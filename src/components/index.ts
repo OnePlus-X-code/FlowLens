@@ -8,3 +8,4 @@ export { TaskBlockCard } from './TaskBlockCard';
 export { MobileScheduleView } from './MobileScheduleView';
 export { DesktopScheduleView } from './DesktopScheduleView';
 export { FocusSession } from './FocusSession';
+export { VoiceRecorder } from './VoiceRecorder';

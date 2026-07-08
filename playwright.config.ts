@@ -7,7 +7,7 @@ export default defineConfig({
   fullyParallel: false,
   reporter: [['list']],
   use: {
-    baseURL: process.env.E2E_BASE_URL ?? 'http://127.0.0.1:8082',
+    baseURL: process.env.E2E_BASE_URL ?? 'http://127.0.0.1:8091',
     channel: 'chrome',
     trace: 'retain-on-failure',
   },
@@ -23,8 +23,8 @@ export default defineConfig({
   webServer: process.env.E2E_BASE_URL
     ? undefined
     : {
-        command: 'npx expo start --web --port 8082',
-        url: 'http://127.0.0.1:8082',
+        command: "powershell -NoProfile -Command \"$env:EXPO_PUBLIC_OPENAI_API_KEY='e2e-key'; npx expo start --web --port 8091\"",
+        url: 'http://127.0.0.1:8091',
         reuseExistingServer: true,
         timeout: 120_000,
       },

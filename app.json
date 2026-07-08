@@ -11,9 +11,15 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "ios": { "supportsTablet": true },
+    "ios": {
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSMicrophoneUsageDescription": "FlowLens needs microphone access to record voice reviews for transcription."
+      }
+    },
     "android": {
-      "adaptiveIcon": { "backgroundColor": "#ffffff" }
+      "adaptiveIcon": { "backgroundColor": "#ffffff" },
+      "permissions": ["RECORD_AUDIO"]
     },
     "web": {
       "bundler": "metro",
