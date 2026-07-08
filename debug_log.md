@@ -50,3 +50,8 @@
 - 前端直连 OpenAI 转录接口会暴露 API Key → 当前仅作为本地 MVP 使用 `EXPO_PUBLIC_OPENAI_API_KEY`，并在 `.env.example` 标注生产环境应迁移到后端/Edge Function 代理。
 - 浏览器自动验收不能依赖真实麦克风和真实 OpenAI 调用 → Playwright 中 mock `navigator.mediaDevices.getUserMedia`、`MediaRecorder` 与 `audio/transcriptions` 响应，验证交互链路而不消耗真实 API。
 - React Native 与 Web 录音能力不同 → Web 使用 `MediaRecorder` 生成 `audio/webm` File，Native 使用 `expo-av` 录音并以 `{ uri, name, type }` 形式上传。
+
+## Task 8（LLM 结构化复盘生成）
+- 结构化复盘需要稳定 JSON → 使用 Responses API 的 `text.format.json_schema` 强制返回 `{ achievements, issues, moodLabel, moodScore }`，再在客户端做兜底归一化。
+- Supabase 未配置或未登录时仍应可用 → 先生成本地 `local_` 复盘卡片并持久化，若 `reviews` 表可写再替换为云端返回记录。
+- Playwright 文本断言遇到包含关系导致 strict mode 冲突 → 对复盘标题、成就、问题、情绪结果使用 `exact: true` 定位。

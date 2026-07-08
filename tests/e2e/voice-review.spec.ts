@@ -50,6 +50,20 @@ test('review page records audio and displays a mocked transcription', async ({ p
       body: JSON.stringify({ text: '今天我完成了周报，也发现下午更适合深度工作。' }),
     });
   });
+  await page.route('https://api.openai.com/v1/responses', async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        output_text: JSON.stringify({
+          achievements: ['完成了周报'],
+          issues: ['需要更好安排下午的深度工作'],
+          moodLabel: '平静',
+          moodScore: 8,
+        }),
+      }),
+    });
+  });
 
   await page.goto('/review');
   await page.getByText('开始录音', { exact: true }).click();
@@ -58,4 +72,10 @@ test('review page records audio and displays a mocked transcription', async ({ p
 
   await expect(page.getByText('转录结果')).toBeVisible();
   await expect(page.getByText('今天我完成了周报，也发现下午更适合深度工作。')).toBeVisible();
+
+  await page.getByText('生成复盘', { exact: true }).click();
+  await expect(page.getByText('结构化复盘', { exact: true })).toBeVisible();
+  await expect(page.getByText('完成了周报', { exact: true })).toBeVisible();
+  await expect(page.getByText('需要更好安排下午的深度工作', { exact: true })).toBeVisible();
+  await expect(page.getByText('平静 · 8/10', { exact: true })).toBeVisible();
 });
